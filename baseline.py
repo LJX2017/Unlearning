@@ -128,12 +128,14 @@ if __name__ == "__main__":
     llama3_70b = Llama3Chat(model_name = "meta-llama-3-70b-instruct")
 
     # run_model('gpt4o', gpt4o, gpt4, False, False, False)
+    run_model('gpt4o', gpt4o, gpt4, False, True, False)
     # run_model('gpt4o', gpt4o, gpt4, False, False, True)
     # run_model('gpt4o', gpt4o, gpt4, False, True, True)
     # run_model('llama3_8b_instruct', llama3_8b, gpt4, False, False, False)
+    # run_model('llama3_8b_instruct', llama3_8b, gpt4, False, True, False)
     # run_model('llama3_8b_instruct', llama3_8b, gpt4, False, False, True)
     # run_model('llama3_8b_instruct', llama3_8b, gpt4, False, True, True)
-    run_model('llama3_70b_instruct', llama3_70b, gpt4, False, False, False  )
-    run_model('llama3_70b_instruct', llama3_70b, gpt4, False, False, True)
-    run_model('llama3_70b_instruct', llama3_70b, gpt4, False, True, True)
+    # run_model('llama3_70b_instruct', llama3_70b, gpt4, False, False, False)
+    # run_model('llama3_70b_instruct', llama3_70b, gpt4, False, False, True)
+    # run_model('llama3_70b_instruct', llama3_70b, gpt4, False, True, True)
 
