@@ -21,7 +21,7 @@ def load_prompts(str_path):
     return prompts
 
 
-def user_attack_prompt(original_prompt: str, use_change_topic: bool,
+def user_attack_prompt(original_prompt: str,
                        use_adversarial_question: bool)->str:
     """generate user's attack prompt"""
     attack_prompt = original_prompt
@@ -30,8 +30,8 @@ def user_attack_prompt(original_prompt: str, use_change_topic: bool,
         attack_prompt_fragments = attack_prompt.split()
         attack_prompt = "?!?!?$%$^#$@#$".join(attack_prompt_fragments)
 
-    if use_change_topic:
-        attack_prompt = CHANGE_TOPIC_PROMPT + "\n" + attack_prompt
+    # if use_change_topic:
+    #     attack_prompt = CHANGE_TOPIC_PROMPT + "\n" + attack_prompt
 
     return attack_prompt
 
@@ -42,15 +42,27 @@ def generate_attack_results(prompts, chat: Chat, with_input_filter: bool,
     system_prompt = SYSTEM_PROMPT
     if with_input_filter:
         system_prompt = system_prompt + '\n' + INPUT_FILTER
-    # prompts = load_prompts(input_path)
-    for i in range(len(prompts)):
-        original_prompt = prompts[i]["prompt"]["prompt"]
 
-        user_prompt = user_attack_prompt(original_prompt, use_change_topic, use_adversarial_question)
-        logger.debug("User Prompt: " + user_prompt)
-        prompts[i]['attack_prompt'] = user_prompt
-        prompts[i]['completion'] = chat.single_completion(system_prompt, user_prompt)
-        logger.debug("Model Response: " + prompts[i]['completion'])
+    if not use_change_topic:
+        for i in range(len(prompts)):
+            original_prompt = prompts[i]["prompt"]["prompt"]
+            user_prompt = user_attack_prompt(original_prompt, use_adversarial_question)
+            logger.debug("User Prompt: " + user_prompt)
+            prompts[i]['attack_prompt'] = user_prompt
+            prompts[i]['completion'] = chat.single_completion(system_prompt, user_prompt)
+            logger.debug("Model Response: " + prompts[i]['completion'])
+    else:
+        for i in range(len(prompts)):
+            original_prompt = prompts[i]["prompt"]["prompt"]
+            user_prompt = user_attack_prompt(original_prompt, use_adversarial_question)
+
+            model_resp = chat.single_completion(system_prompt, CHANGE_TOPIC_PROMPT)
+            prompts[i]['1st_resp'] = model_resp
+
+            logger.debug("User Prompt: CHANGE_TOPIC + " + user_prompt)
+            prompts[i]['attack_prompt'] = user_prompt
+            prompts[i]['completion'] = chat.two_round_completion(system_prompt, CHANGE_TOPIC_PROMPT, model_resp, user_prompt)
+            logger.debug("Model Response: " + prompts[i]['completion'])
 
 
     return prompts
@@ -130,7 +142,7 @@ if __name__ == "__main__":
     # run_model('gpt4o', gpt4o, gpt4, False, False, False)
     run_model('gpt4o', gpt4o, gpt4, False, True, False)
     # run_model('gpt4o', gpt4o, gpt4, False, False, True)
-    # run_model('gpt4o', gpt4o, gpt4, False, True, True)
+    run_model('gpt4o', gpt4o, gpt4, False, True, True)
     # run_model('llama3_8b_instruct', llama3_8b, gpt4, False, False, False)
     # run_model('llama3_8b_instruct', llama3_8b, gpt4, False, True, False)
     # run_model('llama3_8b_instruct', llama3_8b, gpt4, False, False, True)
